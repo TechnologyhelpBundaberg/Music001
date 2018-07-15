@@ -3066,10 +3066,6 @@ class MusicBot(discord.Client):
 else:
 
 
-exports.kick = {
-  usage: "@Discord_tag",
-  description: 'Kick a user from the server, available for mods or higher',
-
   process: function(bot, msg, suffix) {
     if (!checkServer(msg)){
         return;
@@ -3095,12 +3091,6 @@ exports.kick = {
    });
   }
 }
-
-
-exports.ban = {
-  usage: "@Discord_tag",
-  description: "Ban a user from the server, usable for mods or higher",
-
   process: function(bot, msg, suffix) {
     if (!checkServer(msg)){
         return;
@@ -3127,8 +3117,6 @@ exports.ban = {
   }
 }
 
-exports.bans = {
-	description: "returns the list of users who have been banned from this server",
 	process: function(bot,msg,suffix){
     if (!checkServer(msg)){
         return;
