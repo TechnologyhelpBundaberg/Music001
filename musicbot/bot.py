@@ -3063,3 +3063,46 @@ class MusicBot(discord.Client):
             log.debug("Pausing player in \"{}\" due to unavailability.".format(server.name))
             self.server_specific_data[server]['availability_paused'] = True
             player.pause()
+            
+ @commands.command(pass_context=True, no_pm=True)
+    async def serverinfo(self, ctx):
+        """Shows server's informations"""
+        server = ctx.message.server
+        online = len([m.status for m in server.members
+                      if m.status != discord.Status.offline])
+        total_users = len(server.members)
+        text_channels = len([x for x in server.channels
+                             if x.type == discord.ChannelType.text])
+        voice_channels = len([x for x in server.channels
+                             if x.type == discord.ChannelType.voice])
+        passed = (ctx.message.timestamp - server.created_at).days
+        created_at = ("Since {}. That's over {} days ago!"
+                      "".format(server.created_at.strftime("%d %b %Y %H:%M"),
+                                passed))
+
+        colour = ''.join([choice('0123456789ABCDEF') for x in range(6)])
+        colour = int(colour, 16)
+
+        data = discord.Embed(
+            description=created_at,
+            colour=discord.Colour(value=colour))
+        data.add_field(name="Region", value=str(server.region))
+        data.add_field(name="Users", value="{}/{}".format(online, total_users))
+        data.add_field(name="Text Channels", value=text_channels)
+        data.add_field(name="Voice Channels", value=voice_channels)
+        data.add_field(name="Roles", value=len(server.roles))
+        data.add_field(name="Owner", value=str(server.owner))
+        data.set_footer(text="Server ID: " + server.id)
+
+        if server.icon_url:
+            data.set_author(name=server.name, url=server.icon_url)
+            data.set_thumbnail(url=server.icon_url)
+        else:
+            data.set_author(name=server.name)
+
+        try:
+            await self.bot.say(embed=data)
+        except discord.HTTPException:
+            await self.bot.say("I need the `Embed links` permission "
+                               "to send this")
+
